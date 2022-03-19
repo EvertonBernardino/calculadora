@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <style>
+        @font-face {
+        font-family: 'Digital';
+        src: url(fonte/DS-DIGI.TTF) format('opentype');
+        }
+        *{
+            margin: 0px;
+            padding: 0px;
+            
+        }
+        
+        body{
+            background-color: rgb(56, 56, 56);
+            font-family: Arial, Helvetica, sans-serif;
+            
+        }
+        header{
+            background-color: rgb(37, 37, 37);
+            color: white;
+            padding: 2px;
+            font-size: 14pt;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #visor{
+            font-family: 'Digital', Arial, sans-serif;
+            font-size: 30pt;
+            height: 40px;
+            width: 190px;
+            margin-bottom: 10px;
+            padding: 2px;
+            box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.281);
+            background-color: rgb(115, 179, 6);
+            color: rgb(0, 70, 6);
+            
+        }
+        div#calculadora{
+            background-color: aquamarine;
+            margin: auto;
+            margin-top: 80px;
+            padding: 20px;
+            width: 205px;
+            border-radius: 20px;
+            box-shadow: 5px 5px 1px rgba(0, 0, 0, 0.479);
+        }
+        div#botoes{
+            width: 150px;
+            display: inline-block;
+            
+        }
+        div#op{
+            width: 45px;
+            padding: 0px;
+            display: inline-block;
+        }
+        div#botoes > button{
+            margin: 2px;
+            width: 40px;
+            height: 40px;
+            background-color: rgb(59, 105, 88);
+            color: rgb(255, 255, 255);
+            font-size: 20pt;
+        }
+        div#op > button{
+            margin: 2px;
+            width: 40px;
+            height: 40px;
+            background-color: rgb(59, 105, 88);
+            color: rgb(255, 255, 255);
+            font-size: 20pt;
+        }
+        footer#rodape{
+            background-color: rgb(37, 37, 37);
+            color: white;
+            padding: 2px;
+            margin-top: 19.5vh;
+            font-size: 16pt;
+            text-align: center;
+        }
+                
+    </style>
+</head>
+<body>
+    <header><p>Minha primeira calculador desenvolvida em JS, HTML, CSS</p></header>
+    <div id="calculadora">
+        <div id="visor"></div>
+        
+        <div id="botoes" >
+            <button id="limparVisor">CE</button>
+            <button id="limparCalculo" >C</button> 
+            <button id="backspace"><<</button>
+                     
+
+            <button id="tecla1"> 1</button> 
+            <button id="tecla2">2</button>
+            <button id="tecla3">3</button>            
+
+            <button id="tecla4">4</button>
+            <button id="tecla5">5</button>
+            <button id="tecla6">6</button>
+            
+            <button id="tecla7">7</button>
+            <button id="tecla8">8</button>
+            <button id="tecla9">9</button>
+
+            
+            <button id="tecla0">0</button>
+            <button id="tecla00">00</button> 
+            <button id="virgula">,</button>
+                      
+               
+        </div>
+        <div id="op">
+        <button id="operadorividir">/</button>
+        <button id="operadorveses">*</button>
+        <button id="operadormenos">-</button>
+        <button id="operadormais">+</button>
+        <button id="igual">=</button>
+        
+        </div>
+    </div> 
+    <footer id="rodape">
+        <p>Desenvolvido por Everton Bernardino</p>
+    </footer>
+    <script>
+           const visor = document.getElementById("visor")
+           const numeros = document.querySelectorAll('[id*=tecla]')
+           const operadores = document.querySelectorAll('[id*=operador]')
+
+           let novoNumero = true
+           let operador
+           let numeroAnterior
+
+           const operacaoPendente = () => operador != undefined
+
+           const ativarIgual = ()=>{
+               calcular()
+               operador = undefined
+           }
+
+           const calcular = () =>{
+               if(operacaoPendente()){
+                   const numeroAtual = parseFloat (visor.textContent.replace(',','.'))
+                   novoNumero = true
+                   const resultado = eval (`${numeroAnterior}${operador}${numeroAtual}`);
+                   atualizarVisor(resultado);
+               }
+           }
+         
+
+           const atualizarVisor = (text) =>{
+               if (novoNumero){
+                    visor.textContent = text.toLocaleString('BR')
+                    novoNumero = false
+                }else{
+                    visor.textContent += text
+                }
+            }
+           
+
+           const inserirNumero = (evento) => atualizarVisor(evento.target.textContent)
+
+           numeros.forEach( numero => numero.addEventListener('click',inserirNumero))
+
+           const selecionarOperador = (evento) =>  {
+            if(!novoNumero) {
+                calcular()
+                novoNumero = true
+                operador = evento.target.textContent
+                numeroAnterior = parseFloat (visor.textContent.replace(',','.'))
+           }
+        }
+           operadores.forEach( operador => operador.addEventListener('click',selecionarOperador))
+           
+           document.getElementById("igual").addEventListener('click', ativarIgual)
+
+            const limparVisor = () => visor.textContent = ""
+           document.getElementById("limparVisor").addEventListener('click',limparVisor)
+
+           const limparCalculo = () => {
+               limparVisor();
+               operador = undefined
+                novoNumero = true
+                numeroAnterior = undefined
+           }
+           document.getElementById("limparCalculo").addEventListener('click', limparCalculo)
+
+           const removerUltimoNumero = () => visor.textContent = visor.textContent.slice(0, -1)
+           document.getElementById('backspace').addEventListener('click', removerUltimoNumero)
+
+           const existeVirgula = () => visor.textContent.indexOf(',') != -1
+           const existeValor = () => visor.textContent.length > 0
+           const incerirVirgula = () =>{
+               if (!existeVirgula()){
+                   if(existeValor){
+                       atualizarVisor(',')
+                   }else{
+                       atualizarVisor('0,')
+                   }
+               }
+           }
+           document.getElementById('virgula').addEventListener('click', incerirVirgula)
+
+           const mapaTeclado = {
+               '0'         : 'tecla0',
+               '1'         : 'tecla1',
+               '2'         : 'tecla2',
+               '3'         : 'tecla3',
+               '4'         : 'tecla4',
+               '5'         : 'tecla5',
+               '6'         : 'tecla6',
+               '7'         : 'tecla7',
+               '8'         : 'tecla8',
+               '9'         : 'tecla9',
+               '/'         : 'operadorividir',
+               '*'         : 'operadorveses',
+               '-'         : 'operadormenos',
+               '+'         : 'operadormais',
+               '='         : 'igual',
+               'Enter'     : 'igual',
+               'Backspace' : 'backspace',
+               ','         : 'virgula',
+               'c'         : 'limparCalculo'
+
+           }
+
+           const maparTeclado = (evento) =>{
+               const tecla = evento.key
+
+               const teclaPermitida = () => Object.keys(mapaTeclado).indexOf(tecla) != -1
+               if (teclaPermitida()) document.getElementById(mapaTeclado[tecla]).click()
+           }
+           document.addEventListener('keydown', maparTeclado)
+    </script>
+</body>
+</html>
